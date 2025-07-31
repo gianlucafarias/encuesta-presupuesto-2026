@@ -1,16 +1,107 @@
 ---
+// Importar el componente de la encuesta
+import SurveyForm from '../components/SurveyForm';
+import Analytics from '../components/Analytics';
+import '../styles/global.css';
 
+// IDs de analytics (configurar en variables de entorno)
+const CLARITY_ID = import.meta.env.PUBLIC_CLARITY_ID;
+const GA_ID = import.meta.env.PUBLIC_GA_ID;
 ---
 
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		
+		<!-- SEO Meta Tags -->
+		<title>Encuesta de Presupuesto 2026 - Gobierno de la ciudad de Ceres</title>
+		<meta name="description" content="Participa en la encuesta de presupuesto 2026. Tu opinión es fundamental para planificar las inversiones más importantes de la ciudad." />
+		<meta name="keywords" content="encuesta, presupuesto, 2026, municipal, participación ciudadana, inversiones" />
+		<meta name="author" content="Gobierno de la ciudad de Ceres" />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://encuesta-presupuesto-2026.com/" />
+		<meta property="og:title" content="Encuesta de Presupuesto 2026" />
+		<meta property="og:description" content="Participa en la planificación del presupuesto de la ciudad de Ceres 2026" />
+		<meta property="og:image" content="/og-image.jpg" />
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content="https://encuesta-presupuesto-2026.com/" />
+		<meta property="twitter:title" content="Encuesta de Presupuesto 2026" />
+		<meta property="twitter:description" content="Participa en la planificación del presupuesto de la ciudad de Ceres 2026" />
+		<meta property="twitter:image" content="/og-image.jpg" />
+
+		<!-- Preconnect para performance -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		
+		<!-- Favicon -->
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="manifest" href="/site.webmanifest" />
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<!-- Header con logo municipal -->
+		<header class="bg-white shadow-sm border-b border-gray-100">
+			<div class="container mx-auto px-4 py-4 sm:py-6">
+				<div class="flex items-center justify-between">
+					<div class="flex items-center space-x-4">
+						<img src="/logo_gob.png" alt="Logo Municipalidad" class="h-10 sm:h-16" />
+						
+					</div>
+					<div class="text-right">
+						
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- Componente principal de la encuesta -->
+		<main>
+			<SurveyForm client:load />
+		</main>
+
+		<!-- Footer -->
+		<footer class="bg-gray-800 text-white py-6 sm:py-8 mt-12 sm:mt-16">
+			<div class="container mx-auto px-4">
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+					<div>
+						<h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Gobierno de la ciudad de Ceres</h3>
+						<p class="text-gray-300 text-xs sm:text-sm">
+							Trabajando por una ciudad mejor.
+						</p>
+					</div>
+					<div>
+						<h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Contacto</h3>
+						<div class="text-gray-300 text-xs sm:text-sm space-y-1 sm:space-y-2">
+							<p>📧 presupuesto@ceres.gob.ar</p>
+							<p>📞 0800-123-4567</p>
+							<p>📍 Av. Principal 123</p>
+						</div>
+					</div>
+					<div class="sm:col-span-2 lg:col-span-1">
+						<h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Información</h3>
+						<div class="text-gray-300 text-xs sm:text-sm space-y-1 sm:space-y-2">
+							<p>🔒 Tus datos están protegidos</p>
+							<p>✅ Una encuesta por persona</p>
+						</div>
+					</div>
+				</div>
+				<div class="border-t border-gray-700 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center">
+					<p class="text-gray-400 text-xs sm:text-sm">
+						© 2026 Gobierno de la ciudad de Ceres. Todos los derechos reservados.
+					</p>
+				</div>
+			</div>
+		</footer>
+
+		<!-- Analytics -->
+		<Analytics client:load clarityId={CLARITY_ID} googleAnalyticsId={GA_ID} />
 	</body>
 </html>
