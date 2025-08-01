@@ -46,17 +46,39 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 		<link rel="manifest" href="/site.webmanifest" />
 
-		<!-- Google Analytics 4 con Partytown -->
+		<!-- Google Analytics 4 - Implementación Básica -->
 		{GA_ID && (
 			<>
-				<script type="text/partytown" async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
-				<script type="text/partytown">
-					{`
-						window.dataLayer = window.dataLayer || [];
-						function gtag(){dataLayer.push(arguments);}
-						gtag('js', new Date());
-						gtag('config', '${GA_ID}');
-					`}
+				<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+				<script is:inline>
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+					gtag('config', 'G-83P66QQV7Z');
+					
+					// Función global para eventos personalizados
+					window.trackSurveyEvent = function(action, data) {
+						data = data || {};
+						if (window.gtag) {
+							window.gtag('event', action, {
+								event_category: 'Survey',
+								event_label: data.label || '',
+								custom_parameter_1: data.step || '',
+								custom_parameter_2: data.barrio || '',
+								custom_parameter_3: data.type || '',
+								value: data.value || 0
+							});
+							console.log('✅ GA4 Event:', action, data);
+						}
+					};
+					
+					// Evento inicial
+					gtag('event', 'page_view', {
+						event_category: 'Survey',
+						event_label: 'Encuesta Iniciada'
+					});
+					
+					console.log('✅ Google Analytics iniciado (básico):', 'G-83P66QQV7Z');
 				</script>
 			</>
 		)}

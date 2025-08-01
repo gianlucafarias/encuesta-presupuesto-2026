@@ -38,78 +38,47 @@ export default function Analytics({ clarityId, googleAnalyticsId }: AnalyticsPro
       console.log('✅ Microsoft Clarity iniciado:', clarityId);
     }
 
-    // Configurar función gtag proxy para Partytown
-    const setupGtagProxy = () => {
-      // Crear proxy de gtag que funcione con Partytown
-      if (!window.gtag) {
-        window.gtag = function(...args: any[]) {
-          // Verificar si dataLayer existe (creado por Partytown)
-          if (window.dataLayer) {
-            window.dataLayer.push(args);
-            console.log('📊 GA4 Event (Partytown):', args);
-          } else {
-            console.log('⚠️ dataLayer no disponible aún');
+    // Verificar y configurar sistema de tracking después de un tiempo
+    setTimeout(() => {
+      // Backup de trackSurveyEvent si no existe (debería existir desde index.astro)
+      if (!window.trackSurveyEvent) {
+        console.log('⚠️ trackSurveyEvent no encontrado, creando backup...');
+        window.trackSurveyEvent = (action: string, data: any = {}) => {
+          console.log('📊 Survey Event (backup):', action, data);
+          
+          // Enviar a Google Analytics si está disponible
+          if (window.gtag) {
+            window.gtag('event', action, {
+              event_category: 'Survey',
+              event_label: data.label || '',
+              custom_parameter_1: data.step || '',
+              custom_parameter_2: data.barrio || '',
+              custom_parameter_3: data.type || '',
+              value: data.value || 0
+            });
+          }
+          
+          // Enviar a Clarity si está disponible
+          if (window.clarity) {
+            try {
+              window.clarity('set', `survey_${action}`);
+            } catch (e) {
+              console.log('Clarity tracking error:', e);
+            }
           }
         };
       }
-    };
 
-    // Configurar trackSurveyEvent para trabajar con Partytown
-    const setupTrackingEvents = () => {
-      window.trackSurveyEvent = (action: string, data: any = {}) => {
-        console.log('📊 Survey Event:', action, data);
-        
-        // Enviar a Google Analytics via dataLayer (compatible con Partytown)
-        if (window.dataLayer) {
-          const eventData = {
-            event_category: 'Survey',
-            event_label: data.label || '',
-            custom_parameter_1: data.step || '',
-            custom_parameter_2: data.barrio || '',
-            custom_parameter_3: data.type || '',
-            value: data.value || 0
-          };
-          
-          // Usar dataLayer directamente (más confiable con Partytown)
-          window.dataLayer.push(['event', action, eventData]);
-          console.log('✅ Evento enviado via dataLayer:', action, eventData);
-        }
-        
-        // Enviar a Clarity si está disponible
-        if (window.clarity) {
-          try {
-            window.clarity('set', `survey_${action}`);
-          } catch (e) {
-            console.log('Clarity tracking error:', e);
-          }
-        }
-      };
-    };
-
-    // Configurar proxy y eventos inmediatamente
-    setupGtagProxy();
-    setupTrackingEvents();
-
-    // Verificar que dataLayer esté disponible
-    const checkDataLayer = () => {
-      if (window.dataLayer) {
-        console.log('✅ Google Analytics dataLayer detectado');
-        
-        // Enviar evento inicial usando dataLayer
-        window.dataLayer.push(['event', 'survey_loaded', {
-          event_category: 'Survey',
-          event_label: 'Componente Analytics cargado con Partytown'
-        }]);
-        
-        console.log('✅ Sistema de tracking inicializado correctamente');
-      } else {
-        console.log('⏳ Esperando dataLayer...');
-        setTimeout(checkDataLayer, 500);
-      }
-    };
-
-    // Verificar dataLayer después de un tiempo corto
-    setTimeout(checkDataLayer, 1000);
+      // Confirmar que todo está funcionando
+      console.log('✅ Sistema de tracking básico inicializado correctamente');
+      
+      // Enviar evento de confirmación
+      window.trackSurveyEvent('analytics_component_loaded', {
+        step: 'initialization',
+        type: 'system',
+        label: 'Componente Analytics cargado'
+      });
+    }, 1000);
 
   }, [clarityId, googleAnalyticsId]);
 
