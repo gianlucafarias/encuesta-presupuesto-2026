@@ -4,7 +4,7 @@ import type { FormStepProps } from '../types/survey';
 const barrios = [
   'Juan Pablo II',
   'Guillermo Decker',
-  'General López / Cooperativas',
+  'General López / Cooperativa',
   'Instituto',
   'Pedro de Vega',
   'Nuevo',
