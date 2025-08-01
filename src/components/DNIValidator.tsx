@@ -7,6 +7,7 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showTerminos, setShowTerminos] = useState(false);
 
   const validateDNI = async () => {
     if (!dni || dni.length < 7) {
@@ -53,6 +54,14 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
     if (error && error.includes('términos')) {
       setError('');
     }
+  };
+
+  const openTerminos = () => {
+    setShowTerminos(true);
+  };
+
+  const closeTerminos = () => {
+    setShowTerminos(false);
   };
 
   return (
@@ -121,7 +130,7 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
                   <button
                     type="button"
                     className="text-[#006F4B] hover:text-[#008F5B] underline font-medium"
-                    onClick={() => window.open('/terminos-condiciones', '_blank')}
+                    onClick={openTerminos}
                   >
                     términos y condiciones.
                   </button>
@@ -177,6 +186,109 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
           </div>
         </div>
       </div>
+
+      {/* Modal de Términos y Condiciones */}
+      {showTerminos && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            {/* Header del modal */}
+            <div className="px-6 py-6 text-center">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#006F4B]">
+                  Términos y Condiciones
+                </h3>
+                <button
+                  onClick={closeTerminos}
+                  className="text-white hover:text-gray-200 transition-colors p-1"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Contenido del modal */}
+            <div className="px-6 py-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+              <div className="space-y-6 text-gray-700">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                    <svg className="w-8 h-8 text-[#006F4B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <p className="text-lg font-semibold text-gray-800">
+                    Política de Privacidad y Uso de Datos
+                  </p>
+                </div>
+
+                <div className="bg-green-50 border-l-4 border-[#006F4B] p-4 rounded-r-lg">
+                  <h4 className="font-bold text-[#006F4B] mb-2">1. Confidencialidad de Datos</h4>
+                  <p className="text-sm leading-relaxed">
+                    Todos los datos personales proporcionados en esta encuesta son completamente <strong>confidenciales y privados</strong>. 
+                    Su información personal NO será compartida, publicada o divulgada de ninguna manera.
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                  <h4 className="font-bold text-blue-700 mb-2">2. Finalidad del DNI</h4>
+                  <p className="text-sm leading-relaxed">
+                    El número de documento (DNI) se solicita únicamente para <strong>garantizar la participación democrática</strong> 
+                    y asegurar que cada persona pueda completar la encuesta <strong>una sola vez</strong>, 
+                    manteniendo así la integridad del proceso participativo.
+                  </p>
+                </div>
+
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                  <h4 className="font-bold text-amber-700 mb-2">3. Uso de la Información</h4>
+                  <p className="text-sm leading-relaxed">
+                    Los datos recopilados serán utilizados exclusivamente para:
+                  </p>
+                  <ul className="list-disc list-inside mt-2 text-sm space-y-1">
+                    <li>Planificación del presupuesto municipal 2026</li>
+                    <li>Generación de informes agregados y anónimos</li>
+                  </ul>
+                </div>
+
+                <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg">
+                  <h4 className="font-bold text-purple-700 mb-2">4. Protección de Datos</h4>
+                  <p className="text-sm leading-relaxed">
+                    La Municipalidad de Ceres se compromete a proteger su información personal de acuerdo con la 
+                    <strong> Ley 25.326 de Protección de Datos Personales</strong> y las mejores prácticas de seguridad informática.
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 border-l-4 border-gray-500 p-4 rounded-r-lg">
+                  <h4 className="font-bold text-gray-700 mb-2">5. Derechos del Ciudadano</h4>
+                  <p className="text-sm leading-relaxed">
+                    Usted tiene derecho a acceder, rectificar o solicitar la eliminación de sus datos personales 
+                    contactando a la Municipalidad de Ceres a través de los canales oficiales.
+                  </p>
+                </div>
+
+                <div className="text-center pt-4 border-t border-gray-200">
+                  <p className="text-xs text-gray-500">
+                    Al aceptar estos términos, confirma que ha leído y comprende esta política de privacidad.
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    <strong>Gobierno de la Ciudad de Ceres - Plan de Obras 2026</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer del modal */}
+            <div className="px-6 py-2 bg-gray-50 border-t border-gray-200">
+              <button
+                onClick={closeTerminos}
+                className="w-full bg-gradient-to-r from-[#006F4B] to-[#008F5B] text-white py-2 rounded-xl hover:from-[#008F5B] hover:to-[#006F4B] focus:ring-4 focus:ring-green-100 focus:ring-offset-2 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
