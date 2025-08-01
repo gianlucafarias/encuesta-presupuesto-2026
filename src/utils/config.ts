@@ -9,7 +9,7 @@ const getConfig = (): Config => {
   
   if (environment === 'production') {
     return {
-      API_BASE_URL: import.meta.env.PUBLIC_API_URL || 'https://api.ceres.gob.ar/api',
+      API_BASE_URL: import.meta.env.PUBLIC_API_URL || 'https://api.ceres.gob.ar/api/api',
       ENVIRONMENT: 'production'
     };
   }

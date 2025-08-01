@@ -13,7 +13,7 @@ export default function Comments({ data, onNext, onPrevious, onUpdate }: FormSte
     const newErrors: Record<string, string> = {};
 
     if (!formData.comentarios.trim()) {
-      newErrors.comentarios = 'Por favor comparte tus comentarios sobre el presupuesto';
+      newErrors.comentarios = 'Por favor compartí tus comentarios sobre el presupuesto';
     } else if (formData.comentarios.length < 10) {
       newErrors.comentarios = 'El comentario debe tener al menos 10 caracteres';
     }
@@ -53,7 +53,7 @@ export default function Comments({ data, onNext, onPrevious, onUpdate }: FormSte
         </h3>
         
         <p className="text-gray-600 mb-6 text-center">
-          Comparte tus opiniones y sugerencias para mejorar el presupuesto 2026.
+          Compartí tus opiniones y sugerencias para mejorar el presupuesto 2026.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -69,7 +69,7 @@ export default function Comments({ data, onNext, onPrevious, onUpdate }: FormSte
               className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${
                 errors.comentarios ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Comparte tus comentarios sobre cómo debería distribuirse el presupuesto municipal..."
+              placeholder="Compartí tus comentarios sobre cómo debería distribuirse el presupuesto municipal..."
               maxLength={1000}
             />
             <div className="flex justify-between items-center mt-2">
@@ -94,7 +94,7 @@ export default function Comments({ data, onNext, onPrevious, onUpdate }: FormSte
               className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${
                 errors.sugerencias ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="¿Tienes alguna sugerencia específica para proyectos o mejoras en tu barrio?"
+              placeholder="¿Tenés alguna sugerencia específica para proyectos o mejoras en tu barrio? (opcional)"
               maxLength={500}
             />
             <div className="flex justify-between items-center mt-2">

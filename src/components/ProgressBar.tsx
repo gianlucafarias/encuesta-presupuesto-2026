@@ -23,7 +23,7 @@ export default function ProgressBar({ currentStep, totalSteps }: ProgressBarProp
      
 
       {/* Pasos individuales */}
-      <div className="flex justify-between mt-6 px-2">
+      <div className="grid grid-cols-4 sm:grid-cols-7 gap-2 sm:gap-4 mt-4 sm:mt-6 px-2 sm:px-4" style={{ WebkitOverflowScrolling: 'touch' }}>
         {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
           <div
             key={step}
@@ -32,23 +32,23 @@ export default function ProgressBar({ currentStep, totalSteps }: ProgressBarProp
             }`}
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+              className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-300 progress-circle ios-optimized ${
                 step < currentStep
                   ? 'bg-[#FDBA38] text-white shadow-lg'
                   : step === currentStep
-                  ? 'bg-[#006F4B] text-white shadow-lg ring-4 ring-green-100'
+                  ? 'bg-[#006F4B] text-white shadow-lg ring-2 sm:ring-4 ring-green-100'
                   : 'bg-gray-200 text-gray-400'
               }`}
             >
               {step < currentStep ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               ) : (
                 step
               )}
             </div>
-            <span className={`text-xs mt-2 text-center max-w-16 font-medium ${
+            <span className={`text-xs mt-2 sm:mt-3 text-center font-medium leading-tight ${
               step <= currentStep ? 'text-gray-900' : 'text-gray-400'
             }`}>
               {stepLabels[step as SurveyStep]}

@@ -69,7 +69,7 @@ export default function SurveyForm() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight font-rutan">
                   Encuesta Vecinal
                 </h1>
                 <h2 className="text-xl sm:text-2xl font-semibold text-[#006F4B] mb-4">
@@ -79,7 +79,7 @@ export default function SurveyForm() {
               
               <div className="max-w-2xl lg:max-w-none mx-auto">
                 <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-                  Queremos escuchar tu voz. Desde el Gobierno de la ciudad de Ceres estamos planificando el 
+                  Queremos escuchar tu voz. Desde el Gobierno de la Ciudad de Ceres estamos planificando el 
                   <span className="font-semibold text-gray-900"> Plan de Obras Públicas para el año 2026 </span>
                    y tu opinión es fundamental para definir las prioridades de cada barrio.
                 </p>

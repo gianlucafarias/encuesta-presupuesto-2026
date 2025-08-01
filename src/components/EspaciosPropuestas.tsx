@@ -64,7 +64,7 @@ export default function EspaciosPropuestas({ data, onNext, onPrevious, onUpdate 
         <div className="px-6 py-8">
           <div className="text-center mb-8">
             <p className="text-gray-600 text-base leading-relaxed">
-              Comparte tus ideas específicas para mejorar tu barrio. Todos los campos son opcionales.
+              Te invitamos a compartir tus ideas específicas para mejorar tu barrio. Todos los campos son opcionales.
             </p>
           </div>
 

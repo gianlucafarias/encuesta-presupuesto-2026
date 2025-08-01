@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "build:prod": "NODE_ENV=production astro build",
+    "build:prod": "cross-env NODE_ENV=production astro build",
+    "build:win": "set NODE_ENV=production && astro build",
     "preview": "astro preview",
-    "preview:prod": "NODE_ENV=production astro preview",
+    "preview:prod": "cross-env NODE_ENV=production astro preview",
+    "preview:win": "set NODE_ENV=production && astro preview",
     "astro": "astro",
     "clean": "rm -rf dist",
     "clean:logs": "rm -rf .astro"
@@ -21,5 +23,10 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "cross-env": "^7.0.3",
+    "terser": "^5.43.1"
   }
 }

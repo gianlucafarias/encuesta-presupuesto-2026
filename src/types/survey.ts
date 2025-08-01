@@ -22,6 +22,10 @@ export interface SurveyData {
   nombreCompleto: string;
   telefono: string;
   email: string;
+
+  // Paso 7: Comentarios y sugerencias
+  comentarios: string;
+  sugerencias: string;
 }
 
 export type SurveyStep = 1 | 2 | 3 | 4 | 5 | 6 | 7;

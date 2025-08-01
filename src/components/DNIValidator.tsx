@@ -77,7 +77,7 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
         <div className="px-6 py-8">
           <div className="text-center mb-8">
             <p className="text-gray-600 text-base leading-relaxed">
-              Para participar en la encuesta de presupuesto 2026, necesitamos validar tu identidad.
+              Para participar en la encuesta de Plan de Obras 2026, necesitamos validar tu identidad.
             </p>
           </div>
 

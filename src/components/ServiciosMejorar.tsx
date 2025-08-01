@@ -6,7 +6,6 @@ const SERVICIOS_OPCIONES = [
   'Mantenimiento de los espacios verdes',
   'Mantenimiento de las calles',
   'Arbolado / poda',
-  'Volquete',
 ];
 
 export default function ServiciosMejorar({ data, onNext, onPrevious, onUpdate }: FormStepProps) {
