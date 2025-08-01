@@ -38,21 +38,41 @@ export default function Analytics({ clarityId, googleAnalyticsId }: AnalyticsPro
       console.log('✅ Microsoft Clarity iniciado:', clarityId);
     }
 
+    // Configurar función gtag proxy para Partytown
+    const setupGtagProxy = () => {
+      // Crear proxy de gtag que funcione con Partytown
+      if (!window.gtag) {
+        window.gtag = function(...args: any[]) {
+          // Verificar si dataLayer existe (creado por Partytown)
+          if (window.dataLayer) {
+            window.dataLayer.push(args);
+            console.log('📊 GA4 Event (Partytown):', args);
+          } else {
+            console.log('⚠️ dataLayer no disponible aún');
+          }
+        };
+      }
+    };
+
     // Configurar trackSurveyEvent para trabajar con Partytown
     const setupTrackingEvents = () => {
       window.trackSurveyEvent = (action: string, data: any = {}) => {
         console.log('📊 Survey Event:', action, data);
         
-        // Enviar a Google Analytics via Partytown
-        if (window.gtag) {
-          window.gtag('event', action, {
+        // Enviar a Google Analytics via dataLayer (compatible con Partytown)
+        if (window.dataLayer) {
+          const eventData = {
             event_category: 'Survey',
             event_label: data.label || '',
             custom_parameter_1: data.step || '',
             custom_parameter_2: data.barrio || '',
             custom_parameter_3: data.type || '',
             value: data.value || 0
-          });
+          };
+          
+          // Usar dataLayer directamente (más confiable con Partytown)
+          window.dataLayer.push(['event', action, eventData]);
+          console.log('✅ Evento enviado via dataLayer:', action, eventData);
         }
         
         // Enviar a Clarity si está disponible
@@ -66,26 +86,30 @@ export default function Analytics({ clarityId, googleAnalyticsId }: AnalyticsPro
       };
     };
 
-    // Configurar eventos inmediatamente
+    // Configurar proxy y eventos inmediatamente
+    setupGtagProxy();
     setupTrackingEvents();
 
-    // Esperar a que Partytown cargue gtag (backup)
-    const checkGtag = () => {
-      if (window.gtag) {
-        console.log('✅ Google Analytics (Partytown) detectado');
-        // Enviar evento inicial
-        window.gtag('event', 'survey_loaded', {
+    // Verificar que dataLayer esté disponible
+    const checkDataLayer = () => {
+      if (window.dataLayer) {
+        console.log('✅ Google Analytics dataLayer detectado');
+        
+        // Enviar evento inicial usando dataLayer
+        window.dataLayer.push(['event', 'survey_loaded', {
           event_category: 'Survey',
-          event_label: 'Componente Analytics cargado'
-        });
+          event_label: 'Componente Analytics cargado con Partytown'
+        }]);
+        
+        console.log('✅ Sistema de tracking inicializado correctamente');
       } else {
-        console.log('⏳ Esperando Google Analytics...');
-        setTimeout(checkGtag, 1000);
+        console.log('⏳ Esperando dataLayer...');
+        setTimeout(checkDataLayer, 500);
       }
     };
 
-    // Verificar gtag después de un tiempo
-    setTimeout(checkGtag, 2000);
+    // Verificar dataLayer después de un tiempo corto
+    setTimeout(checkDataLayer, 1000);
 
   }, [clarityId, googleAnalyticsId]);
 

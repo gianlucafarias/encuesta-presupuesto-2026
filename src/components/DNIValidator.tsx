@@ -32,12 +32,22 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
         console.log('✅ DNI válido, continuando...');
         
         // Analytics: DNI validado exitosamente
-        if (window.trackSurveyEvent) {
-          window.trackSurveyEvent('dni_validation_success', {
-            step: 'dni_validator',
-            type: 'validation',
-            label: 'DNI válido - continuando a paso 2'
-          });
+        try {
+          if (window.trackSurveyEvent) {
+            window.trackSurveyEvent('dni_validation_success', {
+              step: 'dni_validator',
+              type: 'validation',
+              label: 'DNI válido - continuando a paso 2'
+            });
+          } else if (window.dataLayer) {
+            // Fallback directo a dataLayer si trackSurveyEvent no está disponible
+            window.dataLayer.push(['event', 'dni_validation_success', {
+              event_category: 'Survey',
+              event_label: 'DNI válido - continuando a paso 2'
+            }]);
+          }
+        } catch (e) {
+          console.log('Analytics error:', e);
         }
         
         onUpdate({ dni });
@@ -46,12 +56,22 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
         console.log('❌ DNI ya existe, mostrando error');
         
         // Analytics: DNI ya utilizado
-        if (window.trackSurveyEvent) {
-          window.trackSurveyEvent('dni_validation_failed', {
-            step: 'dni_validator',
-            type: 'validation',
-            label: 'DNI ya utilizado anteriormente'
-          });
+        try {
+          if (window.trackSurveyEvent) {
+            window.trackSurveyEvent('dni_validation_failed', {
+              step: 'dni_validator',
+              type: 'validation',
+              label: 'DNI ya utilizado anteriormente'
+            });
+          } else if (window.dataLayer) {
+            // Fallback directo a dataLayer si trackSurveyEvent no está disponible
+            window.dataLayer.push(['event', 'dni_validation_failed', {
+              event_category: 'Survey',
+              event_label: 'DNI ya utilizado anteriormente'
+            }]);
+          }
+        } catch (e) {
+          console.log('Analytics error:', e);
         }
         
         setError(response.mensaje || 'Este DNI ya ha completado la encuesta anteriormente');
@@ -80,12 +100,22 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
     setShowTerminos(true);
     
     // Analytics: Usuario abrió términos y condiciones
-    if (window.trackSurveyEvent) {
-      window.trackSurveyEvent('terms_opened', {
-        step: 'dni_validator',
-        type: 'interaction',
-        label: 'Usuario abrió modal de términos y condiciones'
-      });
+    try {
+      if (window.trackSurveyEvent) {
+        window.trackSurveyEvent('terms_opened', {
+          step: 'dni_validator',
+          type: 'interaction',
+          label: 'Usuario abrió modal de términos y condiciones'
+        });
+      } else if (window.dataLayer) {
+        // Fallback directo a dataLayer si trackSurveyEvent no está disponible
+        window.dataLayer.push(['event', 'terms_opened', {
+          event_category: 'Survey',
+          event_label: 'Usuario abrió modal de términos y condiciones'
+        }]);
+      }
+    } catch (e) {
+      console.log('Analytics error:', e);
     }
   };
 
