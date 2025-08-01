@@ -45,6 +45,21 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 		<link rel="manifest" href="/site.webmanifest" />
+
+		<!-- Google Analytics 4 con Partytown -->
+		{GA_ID && (
+			<>
+				<script type="text/partytown" async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+				<script type="text/partytown">
+					{`
+						window.dataLayer = window.dataLayer || [];
+						function gtag(){dataLayer.push(arguments);}
+						gtag('js', new Date());
+						gtag('config', '${GA_ID}');
+					`}
+				</script>
+			</>
+		)}
 	</head>
 	<body>
 		<!-- Header con logo municipal -->

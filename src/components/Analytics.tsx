@@ -35,33 +35,15 @@ export default function Analytics({ clarityId, googleAnalyticsId }: AnalyticsPro
       };
       
       initClarity(window, document, "clarity", "script", clarityId);
+      console.log('✅ Microsoft Clarity iniciado:', clarityId);
     }
 
-    // Google Analytics 4
-    if (googleAnalyticsId) {
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`;
-      document.head.appendChild(script);
-
-      window.dataLayer = window.dataLayer || [];
-      function gtag(...args: any[]) {
-        window.dataLayer.push(args);
-      }
-      gtag('js', new Date());
-      gtag('config', googleAnalyticsId, {
-        page_title: 'Plan de Obras 2026 - Encuesta Vecinal',
-        page_location: window.location.href,
-        custom_map: {
-          'custom_parameter_1': 'survey_step',
-          'custom_parameter_2': 'barrio',
-          'custom_parameter_3': 'action_type'
-        }
-      });
-
-      // Función global para tracking de eventos de la encuesta
-      window.gtag = gtag;
+    // Configurar trackSurveyEvent para trabajar con Partytown
+    const setupTrackingEvents = () => {
       window.trackSurveyEvent = (action: string, data: any = {}) => {
+        console.log('📊 Survey Event:', action, data);
+        
+        // Enviar a Google Analytics via Partytown
         if (window.gtag) {
           window.gtag('event', action, {
             event_category: 'Survey',
@@ -73,7 +55,7 @@ export default function Analytics({ clarityId, googleAnalyticsId }: AnalyticsPro
           });
         }
         
-        // También enviar a Clarity si está disponible
+        // Enviar a Clarity si está disponible
         if (window.clarity) {
           try {
             window.clarity('set', `survey_${action}`);
@@ -82,13 +64,29 @@ export default function Analytics({ clarityId, googleAnalyticsId }: AnalyticsPro
           }
         }
       };
+    };
 
-      // Eventos automáticos
-      gtag('event', 'page_view', {
-        event_category: 'Survey',
-        event_label: 'Encuesta Iniciada'
-      });
-    }
+    // Configurar eventos inmediatamente
+    setupTrackingEvents();
+
+    // Esperar a que Partytown cargue gtag (backup)
+    const checkGtag = () => {
+      if (window.gtag) {
+        console.log('✅ Google Analytics (Partytown) detectado');
+        // Enviar evento inicial
+        window.gtag('event', 'survey_loaded', {
+          event_category: 'Survey',
+          event_label: 'Componente Analytics cargado'
+        });
+      } else {
+        console.log('⏳ Esperando Google Analytics...');
+        setTimeout(checkGtag, 1000);
+      }
+    };
+
+    // Verificar gtag después de un tiempo
+    setTimeout(checkGtag, 2000);
+
   }, [clarityId, googleAnalyticsId]);
 
   return null; // Este componente no renderiza nada
