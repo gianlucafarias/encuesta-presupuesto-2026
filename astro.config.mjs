@@ -36,6 +36,20 @@ export default defineConfig({
     // Optimizaciones de CSS
     css: {
       devSourcemap: false
+    },
+    
+    // Configuración de servidor para permitir hosts externos
+    server: {
+      port: 4321,
+      host: true,
+      allowedHosts: ['encuesta.ceres.gob.ar', 'localhost', '127.0.0.1', '66.97.47.243']
+    },
+    
+    // Configuración de preview para permitir hosts externos
+    preview: {
+      port: 4321,
+      host: true,
+      allowedHosts: ['encuesta.ceres.gob.ar', 'localhost', '127.0.0.1', '66.97.47.243']
     }
   },
 
