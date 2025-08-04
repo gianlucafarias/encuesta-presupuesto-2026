@@ -44,14 +44,29 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
       return;
     }
 
-    if (!!config.RECAPTCHA_SITE_KEY && isClient && !captchaValue) {
-      setError('Por favor complete la verificación de seguridad (captcha)');
-      return;
-    }
-
     setIsLoading(true);
     setError('');
 
+    // Si hay reCAPTCHA configurado, ejecutarlo antes de validar DNI
+    if (!!config.RECAPTCHA_SITE_KEY && isClient && recaptchaRef.current && !captchaValue) {
+      try {
+        // Ejecutar reCAPTCHA invisible
+        await recaptchaRef.current.executeAsync();
+        // handleCaptchaChange se ejecutará automáticamente con el token
+        // y luego continuará la validación
+        return;
+      } catch (error) {
+        setError('Error en la verificación de seguridad. Por favor intente nuevamente.');
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    // Continuar con validación normal si ya tenemos el token del captcha
+    proceedWithDNIValidation();
+  };
+
+  const proceedWithDNIValidation = async () => {
     try {
       const response = await validarDNI(dni);
       
@@ -112,6 +127,11 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
     setCaptchaValue(value);
     if (error && error.includes('captcha')) {
       setError('');
+    }
+    
+    // Si recibimos el token del reCAPTCHA invisible, continuar automáticamente
+    if (value && isLoading) {
+      proceedWithDNIValidation();
     }
   };
 
@@ -215,36 +235,18 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
               </p>
             </div>
 
-            {/* Captcha de seguridad */}
-            <div className="space-y-3">
-              <label className="block text-sm font-semibold text-gray-700">
-                Verificación de seguridad
-              </label>
-              <div className="flex justify-center">
-                {!isClient ? (
-                  <div className="bg-blue-50 border-2 border-blue-200 text-blue-700 px-4 py-3 rounded-xl text-sm flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Cargando verificación de seguridad...
-                  </div>
-                ) : !!config.RECAPTCHA_SITE_KEY && ReCAPTCHA ? (
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey={config.RECAPTCHA_SITE_KEY}
-                    onChange={handleCaptchaChange}
-                    onExpired={handleCaptchaExpired}
-                    theme="light"
-                    size="normal"
-                  />
-                ) : (
-                  <div className="bg-yellow-50 border-2 border-yellow-200 text-yellow-700 px-4 py-3 rounded-xl text-sm">
-                    ⚠️ Captcha no configurado. Contacte al administrador.
-                  </div>
-                )}
+            {/* Captcha de seguridad invisible - solo renderizar el componente, sin UI visible */}
+            {!!config.RECAPTCHA_SITE_KEY && isClient && ReCAPTCHA && (
+              <div style={{ display: 'none' }}>
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={config.RECAPTCHA_SITE_KEY}
+                  onChange={handleCaptchaChange}
+                  onExpired={handleCaptchaExpired}
+                  size="invisible"
+                />
               </div>
-            </div>
+            )}
 
             {error && (
               <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-4 rounded-xl text-sm flex items-center">
@@ -260,8 +262,7 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
               disabled={
                 isLoading || 
                 !dni || 
-                !aceptaTerminos || 
-                (!!config.RECAPTCHA_SITE_KEY && isClient && !captchaValue)
+                !aceptaTerminos
               }
               className="mobile-button w-full bg-gradient-to-r from-[#006F4B] to-[#008F5B] text-white py-4 px-6 rounded-xl hover:from-[#008F5B] hover:to-[#006F4B] focus:ring-4 focus:ring-green-100 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
