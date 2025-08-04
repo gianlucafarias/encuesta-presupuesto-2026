@@ -7,6 +7,15 @@ import '../styles/global.css';
 // IDs de analytics (configurar en variables de entorno)
 const CLARITY_ID = import.meta.env.PUBLIC_CLARITY_ID;
 const GA_ID = import.meta.env.PUBLIC_GA_ID;
+
+// Configuración de CSP según entorno
+const isDevelopment = import.meta.env.MODE === 'development';
+const API_URL = import.meta.env.PUBLIC_API_URL || '';
+const productionApiDomain = API_URL ? new URL(API_URL).origin : '';
+
+const connectSrc = isDevelopment 
+  ? "'self' http://localhost:3001 https://www.google-analytics.com https://www.google.com" 
+  : `'self' ${productionApiDomain} https://www.google-analytics.com https://www.google.com`;
 ---
 
 <html lang="es">
@@ -37,16 +46,16 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
 		<meta property="twitter:image" content="/og-image.jpg" />
 
 		<!-- Content Security Policy para reCAPTCHA -->
-		<meta http-equiv="Content-Security-Policy" content="
+		<meta http-equiv="Content-Security-Policy" content={`
 			default-src 'self'; 
 			script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://www.google-analytics.com; 
 			style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
 			font-src 'self' https://fonts.gstatic.com; 
 			img-src 'self' data: https:; 
-			connect-src 'self' https://www.google-analytics.com https://www.google.com; 
+			connect-src ${connectSrc}; 
 			frame-src 'self' https://www.google.com https://recaptcha.google.com https://www.recaptcha.google.com;
 			object-src 'none';
-		" />
+		`} />
 
 		<!-- Preconnect para performance -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
