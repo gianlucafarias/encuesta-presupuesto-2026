@@ -3,8 +3,6 @@ import { config } from './config';
 // Función para validar DNI
 export const validarDNI = async (dni: string) => {
   try {
-    console.log('🔍 Validando DNI:', dni);
-    
     const response = await fetch(`${config.API_BASE_URL}/validar-dni`, {
       method: 'POST',
       headers: {
@@ -14,9 +12,6 @@ export const validarDNI = async (dni: string) => {
     });
 
     const data = await response.json();
-    console.log('📡 Respuesta del backend:', data);
-    console.log('📊 Status:', response.status);
-    console.log('✅ Puede continuar:', data.puedeContinuar);
     
     if (!response.ok) {
       throw new Error(data.mensaje || 'Error al validar DNI');
@@ -24,7 +19,6 @@ export const validarDNI = async (dni: string) => {
 
     return data;
   } catch (error) {
-    console.error('❌ Error validando DNI:', error);
     throw error;
   }
 };
@@ -48,7 +42,6 @@ export const guardarEncuesta = async (encuestaData: any) => {
 
     return data;
   } catch (error) {
-    console.error('Error guardando encuesta:', error);
     throw error;
   }
 };
@@ -65,7 +58,6 @@ export const verificarEstado = async (id: string) => {
 
     return data;
   } catch (error) {
-    console.error('Error verificando estado:', error);
     throw error;
   }
 }; 

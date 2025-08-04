@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { FormStepProps } from '../types/survey';
 import { validarDNI } from '../utils/api';
+import { config } from '../utils/config';
+
+// Importación dinámica para evitar problemas de SSR
+let ReCAPTCHA: any = null;
 
 export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
   const [dni, setDni] = useState('');
@@ -8,6 +12,26 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showTerminos, setShowTerminos] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const recaptchaRef = useRef<any>(null);
+
+  // Cargar ReCAPTCHA solo en el cliente
+  useEffect(() => {
+    const loadReCAPTCHA = async () => {
+      if (typeof window !== 'undefined') {
+        try {
+          const ReCAPTCHAModule = await import('react-google-recaptcha');
+          ReCAPTCHA = ReCAPTCHAModule.default;
+          setIsClient(true);
+        } catch (error) {
+          // Error silencioso para producción
+        }
+      }
+    };
+
+    loadReCAPTCHA();
+  }, []);
 
   const validateDNI = async () => {
     if (!dni || dni.length < 7) {
@@ -20,17 +44,18 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
       return;
     }
 
+    if (!!config.RECAPTCHA_SITE_KEY && isClient && !captchaValue) {
+      setError('Por favor complete la verificación de seguridad (captcha)');
+      return;
+    }
+
     setIsLoading(true);
     setError('');
 
     try {
-      console.log('🚀 Iniciando validación para DNI:', dni);
       const response = await validarDNI(dni);
-      console.log('📋 Respuesta recibida:', response);
       
       if (response.puedeContinuar) {
-        console.log('✅ DNI válido, continuando...');
-        
         // Analytics: DNI validado exitosamente
         if (window.trackSurveyEvent) {
           window.trackSurveyEvent('dni_validation_success', {
@@ -43,8 +68,6 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
         onUpdate({ dni });
         onNext({ dni });
       } else {
-        console.log('❌ DNI ya existe, mostrando error');
-        
         // Analytics: DNI ya utilizado
         if (window.trackSurveyEvent) {
           window.trackSurveyEvent('dni_validation_failed', {
@@ -55,10 +78,19 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
         }
         
         setError(response.mensaje || 'Este DNI ya ha completado la encuesta anteriormente');
+        // Resetear captcha
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+          setCaptchaValue(null);
+        }
       }
     } catch (err: any) {
-      console.log('💥 Error en validación:', err);
       setError(err.message || 'Error al validar el DNI. Por favor intente nuevamente.');
+      // Resetear captcha en caso de error
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+        setCaptchaValue(null);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -74,6 +106,18 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
     if (error && error.includes('términos')) {
       setError('');
     }
+  };
+
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value);
+    if (error && error.includes('captcha')) {
+      setError('');
+    }
+  };
+
+  const handleCaptchaExpired = () => {
+    setCaptchaValue(null);
+    setError('La verificación de seguridad ha expirado. Por favor, complete el captcha nuevamente.');
   };
 
   const openTerminos = () => {
@@ -171,6 +215,37 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
               </p>
             </div>
 
+            {/* Captcha de seguridad */}
+            <div className="space-y-3">
+              <label className="block text-sm font-semibold text-gray-700">
+                Verificación de seguridad
+              </label>
+              <div className="flex justify-center">
+                {!isClient ? (
+                  <div className="bg-blue-50 border-2 border-blue-200 text-blue-700 px-4 py-3 rounded-xl text-sm flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Cargando verificación de seguridad...
+                  </div>
+                ) : !!config.RECAPTCHA_SITE_KEY && ReCAPTCHA ? (
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={config.RECAPTCHA_SITE_KEY}
+                    onChange={handleCaptchaChange}
+                    onExpired={handleCaptchaExpired}
+                    theme="light"
+                    size="normal"
+                  />
+                ) : (
+                  <div className="bg-yellow-50 border-2 border-yellow-200 text-yellow-700 px-4 py-3 rounded-xl text-sm">
+                    ⚠️ Captcha no configurado. Contacte al administrador.
+                  </div>
+                )}
+              </div>
+            </div>
+
             {error && (
               <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-4 rounded-xl text-sm flex items-center">
                 <svg className="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -182,7 +257,12 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
 
             <button
               type="submit"
-              disabled={isLoading || !dni || !aceptaTerminos}
+              disabled={
+                isLoading || 
+                !dni || 
+                !aceptaTerminos || 
+                (!!config.RECAPTCHA_SITE_KEY && isClient && !captchaValue)
+              }
               className="mobile-button w-full bg-gradient-to-r from-[#006F4B] to-[#008F5B] text-white py-4 px-6 rounded-xl hover:from-[#008F5B] hover:to-[#006F4B] focus:ring-4 focus:ring-green-100 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {isLoading ? (
@@ -310,7 +390,7 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
             <div className="px-6 py-2 bg-gray-50 border-t border-gray-200">
               <button
                 onClick={closeTerminos}
-                className="w-full bg-gradient-to-r from-[#006F4B] to-[#008F5B] text-white py-2 rounded-xl hover:from-[#008F5B] hover:to-[#006F4B] focus:ring-4 focus:ring-green-100 focus:ring-offset-2 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="cursor-pointer w-full bg-gradient-to-r from-[#006F4B] to-[#008F5B] text-white py-2 rounded-xl hover:from-[#008F5B] hover:to-[#006F4B] focus:ring-4 focus:ring-green-100 focus:ring-offset-2 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 Cerrar
               </button>

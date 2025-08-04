@@ -35,16 +35,13 @@ export default function Analytics({ clarityId, googleAnalyticsId }: AnalyticsPro
       };
       
       initClarity(window, document, "clarity", "script", clarityId);
-      console.log('✅ Microsoft Clarity iniciado:', clarityId);
     }
 
     // Verificar y configurar sistema de tracking después de un tiempo
     setTimeout(() => {
       // Backup de trackSurveyEvent si no existe (debería existir desde index.astro)
       if (!window.trackSurveyEvent) {
-        console.log('⚠️ trackSurveyEvent no encontrado, creando backup...');
         window.trackSurveyEvent = (action: string, data: any = {}) => {
-          console.log('📊 Survey Event (backup):', action, data);
           
           // Enviar a Google Analytics si está disponible
           if (window.gtag) {
@@ -63,15 +60,12 @@ export default function Analytics({ clarityId, googleAnalyticsId }: AnalyticsPro
             try {
               window.clarity('set', `survey_${action}`);
             } catch (e) {
-              console.log('Clarity tracking error:', e);
+              // Error silencioso en producción
             }
           }
         };
       }
 
-      // Confirmar que todo está funcionando
-      console.log('✅ Sistema de tracking básico inicializado correctamente');
-      
       // Enviar evento de confirmación
       window.trackSurveyEvent('analytics_component_loaded', {
         step: 'initialization',
