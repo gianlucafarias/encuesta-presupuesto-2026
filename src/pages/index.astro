@@ -36,9 +36,24 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
 		<meta property="twitter:description" content="Participa en la planificación del presupuesto de la ciudad de Ceres 2026" />
 		<meta property="twitter:image" content="/og-image.jpg" />
 
+		<!-- Content Security Policy para reCAPTCHA -->
+		<meta http-equiv="Content-Security-Policy" content="
+			default-src 'self'; 
+			script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://www.google-analytics.com; 
+			style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+			font-src 'self' https://fonts.gstatic.com; 
+			img-src 'self' data: https:; 
+			connect-src 'self' https://www.google-analytics.com https://www.google.com; 
+			frame-src 'self' https://www.google.com https://recaptcha.google.com https://www.recaptcha.google.com;
+			object-src 'none';
+		" />
+
 		<!-- Preconnect para performance -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="preconnect" href="https://www.google.com" />
+		<link rel="preconnect" href="https://www.gstatic.com" />
+		<link rel="preconnect" href="https://www.recaptcha.google.com" />
 		
 		<!-- Favicon -->
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -68,7 +83,6 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
 								custom_parameter_3: data.type || '',
 								value: data.value || 0
 							});
-							console.log('✅ GA4 Event:', action, data);
 						}
 					};
 					
@@ -78,7 +92,6 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
 						event_label: 'Encuesta Iniciada'
 					});
 					
-					console.log('✅ Google Analytics iniciado (básico):', 'G-83P66QQV7Z');
 				</script>
 			</>
 		)}
