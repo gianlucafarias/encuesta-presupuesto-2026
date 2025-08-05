@@ -343,7 +343,7 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
                   <h4 className="font-bold text-blue-700 mb-2">2. Finalidad del DNI</h4>
                   <p className="text-sm leading-relaxed">
-                    El número de documento (DNI) se solicita únicamente para <strong>garantizar la participación democrática</strong> 
+                    El número de documento (DNI) se solicita únicamente para <strong>garantizar la participación democrática </strong> 
                     y asegurar que cada persona pueda completar la encuesta <strong>una sola vez</strong>, 
                     manteniendo así la integridad del proceso participativo.
                   </p>
@@ -363,8 +363,8 @@ export default function DNIValidator({ onNext, onUpdate }: FormStepProps) {
                 <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg">
                   <h4 className="font-bold text-purple-700 mb-2">4. Protección de Datos</h4>
                   <p className="text-sm leading-relaxed">
-                    La Municipalidad de Ceres se compromete a proteger su información personal de acuerdo con la 
-                    <strong> Ley 25.326 de Protección de Datos Personales</strong> y las mejores prácticas de seguridad informática.
+                    La Municipalidad de Ceres se compromete a proteger su información personal.
+                   
                   </p>
                 </div>
 

@@ -4,11 +4,11 @@
 # Forzar HTTPS para todos los dominios
 RewriteEngine On
 
-# Redirigir www a no-www (canonicalización)
+# Redirigir www a no-www (canonicalización) - manejar tanto HTTP como HTTPS
 RewriteCond %{HTTP_HOST} ^www\.encuesta\.ceres\.gob\.ar$ [NC]
 RewriteRule ^(.*)$ https://encuesta.ceres.gob.ar/$1 [R=301,L]
 
-# Redirigir HTTP a HTTPS
+# Redirigir HTTP a HTTPS solo para el dominio principal
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP_HOST} ^encuesta\.ceres\.gob\.ar$ [NC]
 RewriteRule ^(.*)$ https://encuesta.ceres.gob.ar/$1 [R=301,L]
